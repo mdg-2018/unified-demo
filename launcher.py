@@ -3,6 +3,9 @@
 import sys
 import cluster
 import archive
+import search
+import workload
+from datetime import datetime
 
 def main():
 
@@ -26,8 +29,13 @@ def main():
     print(auth)
 
     # Create manager objects
-    cluster_mgr = cluster.cluster_manager(auth)
-    oa_mgr = archive.archive_manager(auth,"demo-cluster")
+    # Global cluster name
+    cluster_name = "demo-cluster-" + str(datetime.now().hour) + str(datetime.now().minute)
+
+    cluster_mgr = cluster.cluster_manager(auth,cluster_name)
+    oa_mgr = archive.archive_manager(auth,cluster_name)
+    search_mgr = search.search_manager(auth,cluster_name)
+    
 
     if action == "up":
         #Launch all the stuff
@@ -44,10 +52,17 @@ def main():
         print(oa_mgr.create_archive())
 
         #Create search index
+        print(search_mgr.create_search_index())
+
+        #Populate profiler and performance advisor
+        #Workload manager can't be instantiated until the cluster is ready
+        workload_mgr = workload.workload_generator(auth,cluster_name)
+        print(workload_mgr.setup_profiler())
+
+
     if action == "down":
         response = {
-            "archive": oa_mgr.remove_archive(),
-            "cluster": cluster_mgr.delete_cluster(),
+            "cluster": cluster_mgr.delete_clusters(),
         }
         
         print(response)

@@ -36,7 +36,7 @@ class archive_manager:
             }
             }
         response = requests.post(url,auth=HTTPDigestAuth(self.auth["public_key"],self.auth["private_key"]),json=oa_data,headers={"Accept":"application/vnd.atlas.2023-02-01+json"})
-
+        print(response.json())
         self.id = response.json()["_id"]
 
         return response.json()
@@ -49,12 +49,13 @@ class archive_manager:
         return response.json()
 
     
-    def remove_archive(self):
-        url = "https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{cluster_name}/onlineArchives".format(groupId = self.auth["group_id"],cluster_name = self.cluster_name)
-        response = requests.get(url,auth=HTTPDigestAuth(self.auth["public_key"],self.auth["private_key"]),headers={"Accept":"application/vnd.atlas.2023-02-01+json"})
-        results = []
-        for archive in response.json()["results"]:
-            delete_url = "https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{cluster_name}/onlineArchives/{id}".format(groupId = self.auth["group_id"],cluster_name = self.cluster_name,id=archive["_id"])
-            delete_response = requests.delete(delete_url,auth=HTTPDigestAuth(self.auth["public_key"],self.auth["private_key"]),headers={"Accept":"application/vnd.atlas.2023-02-01+json"})
-            results.append(delete_response.json())
-        return results
+    ## Ended up not needing this since deleting the cluster automatically removes associated archives
+    # def remove_archive(self):
+    #     url = "https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{cluster_name}/onlineArchives".format(groupId = self.auth["group_id"],cluster_name = self.cluster_name)
+    #     response = requests.get(url,auth=HTTPDigestAuth(self.auth["public_key"],self.auth["private_key"]),headers={"Accept":"application/vnd.atlas.2023-02-01+json"})
+    #     results = []
+    #     for archive in response.json()["results"]:
+    #         delete_url = "https://cloud.mongodb.com/api/atlas/v2/groups/{groupId}/clusters/{cluster_name}/onlineArchives/{id}".format(groupId = self.auth["group_id"],cluster_name = self.cluster_name,id=archive["_id"])
+    #         delete_response = requests.delete(delete_url,auth=HTTPDigestAuth(self.auth["public_key"],self.auth["private_key"]),headers={"Accept":"application/vnd.atlas.2023-02-01+json"})
+    #         results.append(delete_response.json())
+    #     return results
