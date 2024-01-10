@@ -9,6 +9,10 @@ from datetime import datetime
 
 def main():
 
+    if sys.argv[1] in ["help","--help","-h"]:
+        print_help_message()
+        exit()
+
     auth = {
         "group_id":"",
         "public_key":"",
@@ -66,5 +70,9 @@ def main():
         }
         
         print(response)
+
+def print_help_message():
+    message="This script requires four positional arguments. The first three are information about your Atlas project and API key.\nThe fourth argument should be \"up\" to setup your demo environment or \"down\" to tear down the environment.\n\nExample: launcher.py AtlasProjectId AtlasPublicKey AtlasPrivateKey [up/down]"
+    return print(message)
 
 main()
